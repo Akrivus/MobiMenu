@@ -1,0 +1,24 @@
+<div class="row h-100">
+  <div class="col col-md-7 m-auto">
+    <h1>Sign In</h1>
+    <p>Please sign in to continue.</p>
+    <form action="/sign-in" method="POST">
+      <div class="row">
+        <div class="col-8 col-md-9 pr-0">
+          <label for="password" <%= 'class="text-danger"' if message %>>Password</label>
+          <input type="password" name="password" class="form-control <%= 'is-invalid' if message %>" placeholder="Password" style="border-radius: 0.25rem 0 0 0.25rem;" value="<%= params[:password] %>">
+          <small class="text-muted">Forgot password? <a href="/forgot-password">Click here.</a></small>
+        </div>
+        <div class="col-4 col-md-3 pl-0">
+          <label for="password" class="text-white">Submit</label>
+          <input type="submit" class="btn btn-dark w-100" style="border-radius: 0 0.25rem 0.25rem 0;" value="Continue">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="invalid-feedback d-block"><%= message %></div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

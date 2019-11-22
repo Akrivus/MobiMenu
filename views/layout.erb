@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html style="font-family: Roboto, sans-serif;">
+  <head>
+    <title>MobiMenu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap-4.3.1.min.css" rel="stylesheet" />
+    <link href="css/local.min.css" rel="stylesheet" />
+    <script src="js/jquery-3.4.1.min.js" defer></script>
+    <script src="js/bootstrap-4.3.1.min.js" defer></script>
+  </head>
+  <body style="overflow-x: hidden;">
+    <nav class="navbar navbar-dark navbar-expand-md bg-dark w-100 mb-5">
+      <a href="/" class="navbar-brand"><span style="color: #A6FFFD;">Mobi</span><span style="color: #F4FFCB;">Menu</span></a>
+      <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Hide/Show" style="border:none;"><span class="navbar-toggler-icon"></span></button>
+      <div class="navbar-brand-spacer"></div>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav ml-auto">
+          <% if session[:signed_in] %>
+            <li class="nav-item">
+              <a href="/sign-out" class="nav-link text-white">Sign Out</a>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </nav>
+    <div class="container">
+      <%= yield %>
+    </div>
+  </body>
+</html>

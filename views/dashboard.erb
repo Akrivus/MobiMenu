@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col">
+    <h1>Dashboard</h1>
+    <p>You have <%= Displays.length %> displays, click 'Edit' to adjust display parameters.</p>
+  </div>
+</div>
+<div class="row">
+  <% Displays.each do |display| %>
+    <div class="col my-1">
+      <div class="rounded p-1 m-auto" style="height: <%= display.height %>px; width: <%= display.width %>px; border: 2px solid #212529;">
+        <div class="clearfix" style="background-image: url('/images/<%= display.filename %>'); background-color: #000000; height: 100%;">
+          <div class="float-right p-1">
+            <a href="/display/<%= display.path %>" class="btn btn-dark">Edit</a>
+          </div>
+          <div class="float-left p-1">
+            <span class="btn text-white"><%= display.name %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
