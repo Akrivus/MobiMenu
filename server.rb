@@ -16,7 +16,7 @@ class Display
       Process.kill('KILL', @pid) unless @pid.nil?
       @pid = fork do
         exec("fim -qwd /dev/#{@path} ./public/images/#{filename}")
-      end unless filename.nil?
+      end
     end
   end
   def width
@@ -53,6 +53,7 @@ at_exit do
     Process.kill('KILL', display.pid)
   end
 end
+system('killall fim')
 DisplaySheet = CSV.read('./display.csv')
 DisplaySheet.each do |row|
   Displays << Display.new(row)
