@@ -12,10 +12,11 @@ class Display
   end
   def image(filename)
     @filename = URI.unescape(filename)
-    Process.kill('KILL', @pid) unless @pid.nil?
-    @pid = fork do
-      exec("fim -qwd /dev/#{@path} ./public/images/#{@filename}")
-    end unless @filename.nil?
+    kill_then do
+      @pid = fork do
+        exec("fim -qwd /dev/#{@path} ./public/images/#{@filename}")
+      end unless @filename.nil?
+    end
     @ratio = @aspect_ratio.split(':').map { |ration|
       ration.to_f }.inject(:/)
   end
@@ -41,6 +42,14 @@ class Display
       end
     end
   end
+  def kill
+    Process.kill('SIG', @pid) unless @pid.nil?
+    system("dd if=/dev/zero of=/dev/#{@path}")
+  end
+  def kill_then
+    kill
+    yield
+  end
   def self.find path
     Displays.each do |display|
       return display if display.path.eql? path
@@ -54,7 +63,7 @@ DisplaySheet.each do |row|
 end
 at_exit do
   Displays.each do |display|
-    Process.kill('KILL', display.pid)
+    display.kill
   end
 end
 
