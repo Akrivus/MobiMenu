@@ -3,8 +3,13 @@ require 'sinatra'
 require 'csv'
 
 Displays = []
+at_exit do
+  Displays.each do |display|
+    Process.kill('KILL', display.pid)
+  end
+end
 class Display
-  attr_reader :path, :aspect_ratio, :name, :filename
+  attr_reader :path, :aspect_ratio, :name, :filename, :pid
   def initialize(row)
     @path, @aspect_ratio, @name = row[0..2]
     image(row[3])
@@ -13,8 +18,8 @@ class Display
     @ratio = @aspect_ratio.split(':').map { |ration| ration.to_f }.inject(:/)
     @filename = filename
     if Process.respond_to? :fork
-      @proc.kill unless @proc.nil?
-      @proc = fork do
+      Process.kill('KILL', @pid) unless @pid.nil?
+      @pid = fork do
         exec("fim -qwd /dev/#{@path} /public/images/#{filename}")
       end unless filename.nil?
     end
