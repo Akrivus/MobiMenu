@@ -11,14 +11,12 @@ class Display
     image(row[3])
   end
   def image(filename)
+    @ratio = @aspect_ratio.split(':').map { |ration| ration.to_f }.inject(:/)
     @filename = URI.unescape(filename)
-    kill_then do
-      @pid = fork do
-        exec("fim -qwd /dev/#{@path} ./public/images/#{@filename}")
-      end unless @filename.nil?
-    end
-    @ratio = @aspect_ratio.split(':').map { |ration|
-      ration.to_f }.inject(:/)
+    kill_and_clear
+    @pid = fork do
+      exec("fim -qwd /dev/#{@path} ./public/images/#{@filename}")
+    end unless @filename.nil?
   end
   def width
     return height * @ratio
@@ -42,29 +40,31 @@ class Display
       end
     end
   end
-  def kill
+  def kill_and_clear
     Process.kill('TERM', @pid) unless @pid.nil?
     system("dd if=/dev/zero of=/dev/#{@path}")
-  end
-  def kill_then
-    kill
-    yield
   end
   def self.find path
     Displays.each do |display|
       return display if display.path.eql? path
     end
   end
+  def self.refresh!
+    Displays.each do |display|
+      display.image(display.filename)
+    end
+  end
+  def self.destroy!
+    Displays.each do |display|
+      display.kill_and_clear
+    end
+  end
 end
 
 DisplaySheet = CSV.read('./display.csv')
+sleep 1
 DisplaySheet.each do |row|
   Displays << Display.new(row)
-end
-at_exit do
-  Displays.each do |display|
-    display.kill
-  end
 end
 
 enable :sessions
@@ -73,6 +73,9 @@ set :signed_in do |required|
   condition do
     redirect '/sign-in' unless session[:signed_in]
   end if required
+end
+at_exit do
+  Display.destroy!
 end
 def message
   return nil
@@ -93,6 +96,7 @@ post '/sign-in' do
   end
 end
 get '/', signed_in: true do
+  Display.refresh!
   erb(:dashboard)
 end
 get '/display/:path', signed_in: true do
