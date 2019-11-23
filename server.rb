@@ -49,14 +49,14 @@ class Display
   end
 end
 
+DisplaySheet = CSV.read('./display.csv')
+DisplaySheet.each do |row|
+  Displays << Display.new(row)
+end
 at_exit do
   Displays.each do |display|
     Process.kill('KILL', display.pid)
   end
-end
-DisplaySheet = CSV.read('./display.csv')
-DisplaySheet.each do |row|
-  Displays << Display.new(row)
 end
 
 enable :sessions
