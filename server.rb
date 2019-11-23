@@ -3,13 +3,6 @@ require 'sinatra'
 require 'csv'
 
 Displays = []
-DisplaySheet = CSV.read('./display.csv')
-DisplaySheet.each do |row|
-  Displays << Display.new(row)
-end
-at_exit do
-  Displays.each { |display| Process.kill('KILL', display.pid) }
-end
 class Display
   attr_reader :path, :aspect_ratio, :name, :filename, :pid
   def initialize(row)
@@ -53,6 +46,16 @@ class Display
       return display if display.path.eql? path
     end
   end
+end
+
+at_exit do
+  Displays.each do |display|
+    Process.kill('KILL', display.pid)
+  end
+end
+DisplaySheet = CSV.read('./display.csv')
+DisplaySheet.each do |row|
+  Displays << Display.new(row)
 end
 
 enable :sessions
