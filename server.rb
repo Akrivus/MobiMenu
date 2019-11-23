@@ -43,7 +43,7 @@ class Display
     end
   end
   def kill
-    Process.kill('SIG', @pid) unless @pid.nil?
+    Process.kill('TERM', @pid) unless @pid.nil?
     system("dd if=/dev/zero of=/dev/#{@path}")
   end
   def kill_then
@@ -69,36 +69,36 @@ end
 
 enable :sessions
 set :session_secret, ENV['SECRET']
-set :signed_in do |required|
+set :TERMned_in do |required|
   condition do
-    redirect '/sign-in' unless session[:signed_in]
+    redirect '/TERMn-in' unless session[:TERMned_in]
   end if required
 end
 def message
   return nil
 end
 
-get '/sign-out' do
-  erb(:sign_out)
+get '/TERMn-out' do
+  erb(:TERMn_out)
 end
-get '/sign-in' do
-  erb(:sign_in)
+get '/TERMn-in' do
+  erb(:TERMn_in)
 end
-post '/sign-in' do
+post '/TERMn-in' do
   unless params[:password].eql? ENV['PASSWORD']
-    erb(:sign_in, locals: { message: 'Incorrect password.' })
+    erb(:TERMn_in, locals: { message: 'Incorrect password.' })
   else
-    session[:signed_in] = true
+    session[:TERMned_in] = true
     redirect '/'
   end
 end
-get '/', signed_in: true do
+get '/', TERMned_in: true do
   erb(:dashboard)
 end
-get '/display/:path', signed_in: true do
+get '/display/:path', TERMned_in: true do
   erb(:display, locals: { display: Display.find(params[:path]) })
 end
-post '/display/:path', signed_in: true do
+post '/display/:path', TERMned_in: true do
   display = Display.find(params[:path])
   unless params[:image].nil?
     File.open("./public/images/#{params[:image][:filename]}", 'wb') do |file|
