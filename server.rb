@@ -11,14 +11,13 @@ class Display
     image(row[3])
   end
   def image(filename)
-    @ratio = @aspect_ratio.split(':').map { |ration| ration.to_f }.inject(:/)
     @filename = URI.unescape(filename)
-    if Process.respond_to? :fork
-      Process.kill('KILL', @pid) unless @pid.nil?
-      @pid = fork do
-        exec("fim -qwd /dev/#{@path} ./public/images/#{@filename}")
-      end unless @filename.nil?
-    end
+    Process.kill('KILL', @pid) unless @pid.nil?
+    @pid = fork do
+      exec("fim -qwd /dev/#{@path} ./public/images/#{@filename}")
+    end unless @filename.nil?
+    @ratio = @aspect_ratio.split(':').map { |ration|
+      ration.to_f }.inject(:/)
   end
   def width
     return height * @ratio
@@ -93,12 +92,12 @@ end
 post '/display/:path', signed_in: true do
   display = Display.find(params[:path])
   unless params[:image].nil?
-    display.from_params(params[:name], params[:image][:filename])
     File.open("./public/images/#{params[:image][:filename]}", 'wb') do |file|
       File.open(params[:image][:tempfile].path, 'rb') do |temp|
         file.write(temp.read)
       end
     end
+    display.from_params(params[:name], params[:image][:filename])
   else
     display.from_params(params[:name], nil)
   end
