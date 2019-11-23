@@ -15,7 +15,7 @@ class Display
     if Process.respond_to? :fork
       @proc.kill unless @proc.nil?
       @proc = fork do
-        exec("fbi -d /dev/#{@path} ./public/#{filename}")
+        exec("fim -qwd /dev/#{@path} ./public/#{filename}")
       end unless filename.nil?
     end
   end
