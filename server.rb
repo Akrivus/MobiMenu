@@ -1,6 +1,7 @@
 require 'dotenv/load'
 require 'sinatra'
 require 'csv'
+require 'uri'
 
 Displays = []
 class Display
@@ -11,12 +12,12 @@ class Display
   end
   def image(filename)
     @ratio = @aspect_ratio.split(':').map { |ration| ration.to_f }.inject(:/)
-    @filename = filename
+    @filename = URI.unescape(filename)
     if Process.respond_to? :fork
       Process.kill('KILL', @pid) unless @pid.nil?
       @pid = fork do
-        exec("fim -qwd /dev/#{@path} ./public/images/#{filename}")
-      end
+        exec("fim -qwd /dev/#{@path} ./public/images/#{@filename}")
+      end unless @filename.nil?
     end
   end
   def width
@@ -53,7 +54,6 @@ at_exit do
     Process.kill('KILL', display.pid)
   end
 end
-system('killall fim')
 DisplaySheet = CSV.read('./display.csv')
 DisplaySheet.each do |row|
   Displays << Display.new(row)
