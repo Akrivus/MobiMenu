@@ -55,6 +55,9 @@ end
 
 enable :sessions
 set :session_secret, ENV['SECRET']
+set :server, 'thin'
+set :host, '0.0.0.0'
+set :port, 80
 set :signed_in do |required|
   condition do
     redirect '/sign-in' unless session[:signed_in]
