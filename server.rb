@@ -3,10 +3,12 @@ require 'sinatra'
 require 'csv'
 
 Displays = []
+DisplaySheet = CSV.read('./display.csv')
+DisplaySheet.each do |row|
+  Displays << Display.new(row)
+end
 at_exit do
-  Displays.each do |display|
-    Process.kill('KILL', display.pid)
-  end
+  Displays.each { |display| Process.kill('KILL', display.pid) }
 end
 class Display
   attr_reader :path, :aspect_ratio, :name, :filename, :pid
@@ -53,15 +55,8 @@ class Display
   end
 end
 
-DisplaySheet = CSV.read('./display.csv')
-DisplaySheet.each do |row|
-  Displays << Display.new(row)
-end
-
 enable :sessions
 set :session_secret, ENV['SECRET']
-set :host, '0.0.0.0'
-set :port, 80
 set :signed_in do |required|
   condition do
     redirect '/sign-in' unless session[:signed_in]
