@@ -96,7 +96,6 @@ post '/sign-in' do
   end
 end
 get '/', signed_in: true do
-  Display.refresh!
   erb(:dashboard)
 end
 get '/display/:path', signed_in: true do
