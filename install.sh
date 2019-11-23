@@ -2,8 +2,8 @@
 
 echo 'Updating your packages...'
 sudo apt update && sudo apt upgrade -y
-echo 'Installing nginx...'
-sudo apt install nginx
+echo 'Installing nginx and FIM...'
+sudo apt install nginx fim
 echo 'Configuring nginx...'
 sudo cp -f ./nginx.config /etc/nginx/sites-enabled/default
 echo 'Appending start up script to your bash profile.'
