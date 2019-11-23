@@ -15,7 +15,7 @@ class Display
     if Process.respond_to? :fork
       Process.kill('KILL', @pid) unless @pid.nil?
       @pid = fork do
-        exec("fim -qwd /dev/#{@path} /public/images/#{filename}")
+        exec("fim -qwd /dev/#{@path} ./public/images/#{filename}")
       end unless filename.nil?
     end
   end
