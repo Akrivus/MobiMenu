@@ -69,36 +69,36 @@ end
 
 enable :sessions
 set :session_secret, ENV['SECRET']
-set :TERMned_in do |required|
+set :signed_in do |required|
   condition do
-    redirect '/TERMn-in' unless session[:TERMned_in]
+    redirect '/sign-in' unless session[:signed_in]
   end if required
 end
 def message
   return nil
 end
 
-get '/TERMn-out' do
-  erb(:TERMn_out)
+get '/sign-out' do
+  erb(:sign_out)
 end
-get '/TERMn-in' do
-  erb(:TERMn_in)
+get '/sign-in' do
+  erb(:sign_in)
 end
-post '/TERMn-in' do
+post '/sign-in' do
   unless params[:password].eql? ENV['PASSWORD']
-    erb(:TERMn_in, locals: { message: 'Incorrect password.' })
+    erb(:sign_in, locals: { message: 'Incorrect password.' })
   else
-    session[:TERMned_in] = true
+    session[:signed_in] = true
     redirect '/'
   end
 end
-get '/', TERMned_in: true do
+get '/', signed_in: true do
   erb(:dashboard)
 end
-get '/display/:path', TERMned_in: true do
+get '/display/:path', signed_in: true do
   erb(:display, locals: { display: Display.find(params[:path]) })
 end
-post '/display/:path', TERMned_in: true do
+post '/display/:path', signed_in: true do
   display = Display.find(params[:path])
   unless params[:image].nil?
     File.open("./public/images/#{params[:image][:filename]}", 'wb') do |file|
