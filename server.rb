@@ -13,7 +13,8 @@ class Display
   def image(filename)
     @ratio = @aspect_ratio.split(':').map { |ration| ration.to_f }.inject(:/)
     @filename = URI.unescape(filename)
-    clear do
+    Process.kill('SIGTERM', @pid) unless @pid.nil?
+    @pid = fork
       exec("fim -qwd /dev/#{@path} ~/MobiMenu/public/images/#{@filename}")
     end unless @filename.nil?
   end
@@ -39,12 +40,6 @@ class Display
       end
     end
   end
-  def clear
-    Process.kill('SIGTERM', @pid) unless @pid.nil?
-    @pid = fork do
-      yield
-    end
-  end
   def self.find path
     Displays.each do |display|
       return display if display.path.eql? path
@@ -57,7 +52,7 @@ class Display
   end
   def self.destroy!
     Displays.each do |display|
-      display.clear { false }
+      Process.kill('SIGTERM', display.pid)
     end
   end
 end
