@@ -14,7 +14,7 @@ class Display
     @ratio = @aspect_ratio.split(':').map { |ration| ration.to_f }.inject(:/)
     @filename = URI.unescape(filename)
     clear do
-      exec("fim -qwd /dev/#{@path} ./public/images/#{@filename}")
+      exec("fim -qwd /dev/#{@path} ~/MobiMenu/public/images/#{@filename}")
     end unless @filename.nil?
   end
   def width
