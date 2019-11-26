@@ -39,14 +39,14 @@ class Display
       end
     end
   end
-  def clear
+  def clear block = true
     unless @pid.nil?
       system("cat /dev/zero > /dev/#{@path}")
       Process.kill('TERM', @pid) 
     end
     @pid = fork do
       yield
-    end
+    end if block
   end
   def self.find path
     Displays.each do |display|
@@ -60,7 +60,7 @@ class Display
   end
   def self.destroy!
     Displays.each do |display|
-      display.clear
+      display.clear(false)
     end
   end
 end
