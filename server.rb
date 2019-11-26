@@ -14,7 +14,7 @@ class Display
     @ratio = @aspect_ratio.split(':').map { |ration| ration.to_f }.inject(:/)
     @filename = URI.unescape(filename)
     Process.kill('SIGTERM', @pid) unless @pid.nil?
-    @pid = fork
+    @pid = fork do
       exec("fim -qwd /dev/#{@path} ~/MobiMenu/public/images/#{@filename}")
     end unless @filename.nil?
   end
