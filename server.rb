@@ -15,7 +15,7 @@ class Display
     @filename = URI.unescape(filename)
     Process.kill('SIGTERM', @pid) unless @pid.nil?
     @pid = fork do
-      exec("fim -qwd /dev/#{@path} ~/MobiMenu/public/images/#{@filename}")
+      exec("fim -T 1 -waqd /dev/#{@path} ~/MobiMenu/public/images/#{@filename}")
     end unless @filename.nil?
   end
   def width
