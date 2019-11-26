@@ -40,10 +40,7 @@ class Display
     end
   end
   def clear block = true
-    unless @pid.nil?
-      system("cat /dev/zero > /dev/#{@path}")
-      Process.kill('TERM', @pid) 
-    end
+    Process.kill('TERM', @pid) unless @pid.nil?
     @pid = fork do
       yield
     end if block
