@@ -121,3 +121,5 @@ post '/display/:path', signed_in: true do
   end
   redirect '/'
 end
+
+Display.refresh!
