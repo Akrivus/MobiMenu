@@ -66,11 +66,10 @@ class Display
 end
 
 DisplaySheet = CSV.read('./display.csv')
-sleep 1
 DisplaySheet.each do |row|
   Displays << Display.new(row)
+  Display.refresh!
 end
-Display.refresh!
 
 enable :sessions
 set :session_secret, ENV['SECRET']
