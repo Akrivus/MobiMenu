@@ -3,8 +3,6 @@ require 'sinatra'
 require 'csv'
 require 'uri'
 
-system('killall bundle fim')
-
 Displays = []
 class Display
   attr_reader :path, :aspect_ratio, :name, :filename, :pid
@@ -27,8 +25,8 @@ class Display
     return 384.0
   end
   def from_params(name, filename)
-    image(filename) unless filename.nil?
     @name = name
+    image(filename) unless filename.nil?
     save
   end
   def to_a
@@ -77,8 +75,9 @@ set :signed_in do |required|
     redirect '/sign-in' unless session[:signed_in]
   end if required
 end
+PID = Process.pid
 at_exit do
-  Display.destroy!
+  Display.destroy! if PID.eql? Process.pid
 end
 def message
   return nil
