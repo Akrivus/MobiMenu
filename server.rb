@@ -3,6 +3,8 @@ require 'sinatra'
 require 'csv'
 require 'uri'
 
+system('killall bundle fim')
+
 Displays = []
 class Display
   attr_reader :path, :aspect_ratio, :name, :filename, :pid
