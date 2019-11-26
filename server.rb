@@ -70,6 +70,7 @@ sleep 1
 DisplaySheet.each do |row|
   Displays << Display.new(row)
 end
+Display.refresh!
 
 enable :sessions
 set :session_secret, ENV['SECRET']
@@ -121,5 +122,3 @@ post '/display/:path', signed_in: true do
   end
   redirect '/'
 end
-
-Display.refresh!
