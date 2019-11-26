@@ -42,7 +42,7 @@ class Display
   end
   def kill_and_clear
     Process.kill('TERM', @pid) unless @pid.nil?
-    system("dd if=/dev/zero of=/dev/#{@path}")
+    system("cat /dev/zero > /dev/#{@path}")
   end
   def self.find path
     Displays.each do |display|
@@ -117,5 +117,3 @@ post '/display/:path', signed_in: true do
   end
   redirect '/'
 end
-
-Display.refresh!
