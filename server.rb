@@ -13,8 +13,7 @@ class Display
   def image(filename)
     @ratio = @aspect_ratio.split(':').map { |ration| ration.to_f }.inject(:/)
     @filename = URI.unescape(filename)
-    kill_and_clear
-    @pid = fork do
+    clear do
       exec("fim -qwd /dev/#{@path} ./public/images/#{@filename}")
     end unless @filename.nil?
   end
@@ -40,9 +39,14 @@ class Display
       end
     end
   end
-  def kill_and_clear
-    Process.kill('TERM', @pid) unless @pid.nil?
-    system("cat /dev/zero > /dev/#{@path}")
+  def clear
+    unless @pid.nil?
+      system("cat /dev/zero > /dev/#{@path}")
+      Process.kill('TERM', @pid) 
+    end
+    @pid = fork do
+      yield
+    end
   end
   def self.find path
     Displays.each do |display|
@@ -56,7 +60,7 @@ class Display
   end
   def self.destroy!
     Displays.each do |display|
-      display.kill_and_clear
+      display.clear
     end
   end
 end
