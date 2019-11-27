@@ -11,7 +11,7 @@ class Display
     image(row[4])
   end
   def image(filename)
-    @filename = URI.unescape(filename)
+    @filename = URI.unescape(filename) unless filename.nil?
     @angle = @angle.to_i
     @ratios = @aspect_ratio.split('x')
     @ratios.reverse! if @angle.odd?
@@ -33,7 +33,7 @@ class Display
   end
   def from_params(aspect_ratio, angle, name, filename)
     @aspect_ratio = aspect_ratio
-    @angle = angle
+    @angle = angle / 90
     @name = name
     image(filename)
   end
