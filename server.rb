@@ -51,11 +51,7 @@ end
 DisplaySheet = CSV.read('./display.csv')
 DisplaySheet.each do |row|
   Displays << Display.new(row)
-  sleep 1
-  Display.refresh!
 end
-
-sleep 2
 
 disable :logging
 enable :sessions
@@ -104,3 +100,5 @@ post '/display/:path', signed_in: true do
   end
   redirect '/'
 end
+
+Display.refresh!
