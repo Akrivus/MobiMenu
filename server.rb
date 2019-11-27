@@ -11,12 +11,8 @@ class Display
     image(row[3])
   end
   def image(filename)
-    @ratio = @aspect_ratio.split(':').map { |ration| ration.to_f }.inject(:/)
-    @filename = URI.unescape(filename)
-    Process.kill('SIGTERM', @pid) unless @pid.nil?
-    @pid = fork do
-      exec("fim -T 1 -waqd /dev/#{@path} ~/MobiMenu/public/images/#{@filename}")
-    end unless @filename.nil?
+    system("convert -geometry x#{@aspect_ratio.split('x')[1]} -gravity center -extent #{@aspect_ratio} ~/MobiMenu/public/images/#{@filename = URI.unescape(filename)} bgra:/dev/#{@path}")
+    @ratio = @aspect_ratio.split('x').map { |ration| ration.to_f }.inject(:/)
   end
   def width
     return height * @ratio
@@ -25,8 +21,8 @@ class Display
     return 384.0
   end
   def from_params(name, filename)
+    image(filename)
     @name = name
-    image(filename) unless filename.nil?
     save
   end
   def to_a
@@ -50,11 +46,6 @@ class Display
       display.image(display.filename)
     end
   end
-  def self.destroy!
-    Displays.each do |display|
-      Process.kill('SIGTERM', display.pid)
-    end
-  end
 end
 
 DisplaySheet = CSV.read('./display.csv')
@@ -73,10 +64,6 @@ set :signed_in do |required|
   condition do
     redirect '/sign-in' unless session[:signed_in]
   end if required
-end
-PID = Process.pid
-at_exit do
-  Display.destroy! if PID.eql? Process.pid
 end
 def message
   return nil
