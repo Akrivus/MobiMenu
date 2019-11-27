@@ -57,6 +57,7 @@ end
 
 sleep 2
 
+disable :logging
 enable :sessions
 set :session_secret, ENV['SECRET']
 set :environment, :production
