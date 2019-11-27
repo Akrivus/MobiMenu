@@ -8,7 +8,6 @@ class Display
   attr_reader :path, :aspect_ratio, :name, :angle, :filename, :pid
   def initialize(row)
     @path, @aspect_ratio, @angle, @name = row[0..3]
-    #system("fbset -g #{(@aspect_ratio.split('x') * 2).join(' ')} 32 -fb /dev/#{@path}")
     image(row[4])
   end
   def image(filename)
@@ -32,7 +31,9 @@ class Display
   def height
     return 384.0
   end
-  def from_params(name, filename)
+  def from_params(aspect_ratio, angle, name, filename)
+    @aspect_ratio = aspect_ratio
+    @angle = angle
     @name = name
     image(filename)
   end
@@ -105,9 +106,9 @@ post '/display/:path', signed_in: true do
         file.write(temp.read)
       end
     end
-    display.from_params(params[:name], params[:image][:filename])
+    display.from_params(params[:aspect_ratio], params[:angle], params[:name], params[:image][:filename])
   else
-    display.from_params(params[:name], nil)
+    display.from_params(params[:aspect_ratio], params[:angle], params[:name], nil)
   end
   redirect '/'
 end
