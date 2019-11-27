@@ -11,7 +11,7 @@ class Display
     image(row[3])
   end
   def image(filename)
-    system("convert -geometry x#{@aspect_ratio.split('x')[1]} -gravity center -extent #{@aspect_ratio} ~/MobiMenu/public/images/#{@filename = URI.unescape(filename)} bgra:/dev/#{@path}")
+    system("convert -geometry x#{@aspect_ratio.split('x')[1]} -background black -gravity center -extent #{@aspect_ratio} ~/MobiMenu/public/images/#{@filename = URI.unescape(filename)} bgra:/dev/#{@path}")
     @ratio = @aspect_ratio.split('x').map { |ration| ration.to_f }.inject(:/)
   end
   def width
