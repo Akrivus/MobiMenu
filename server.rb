@@ -8,6 +8,7 @@ class Display
   attr_reader :path, :aspect_ratio, :name, :angle, :filename, :pid
   def initialize(row)
     @path, @aspect_ratio, @angle, @name = row[0..3]
+    #system("fbset -g #{(@aspect_ratio.split('x') * 2).join(' ')} 32 -fb /dev/#{@path}")
     image(row[4])
   end
   def image(filename)
@@ -16,7 +17,6 @@ class Display
     @ratios = @aspect_ratio.split('x')
     @ratios.reverse! if @angle.odd?
     @ratio = @ratios.map { |r| r.to_f }.inject(:/)
-    system("fbset -g #{(@aspect_ratio.split('x') * 2).join(' ')} 32 -fb /dev/#{@path}")
     system([
       "convert#{" -rotate #{@angle * 90}" if @angle > 0}",
       "-geometry x#{@aspect_ratio.split('x')[1]}",
