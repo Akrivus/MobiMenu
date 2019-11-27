@@ -13,13 +13,15 @@ class Display
     image(row[3])
   end
   def image(filename)
-    system("convert -geometry x#{@aspect_ratio.split('x')[1]} -background black -rotate #{@angle * 90} -extent #{@aspect_ratio} ~/MobiMenu/public/images/#{@filename = URI.unescape(filename)} bgra:/dev/#{@path}")
-    case @angle
-    when 1, 3
-      @ratio = @aspect_ratio.reverse.split('x').map { |ration| ration.to_f }.inject(:/)
-    when 0, 2
-      @ratio = @aspect_ratio.split('x').map { |ration| ration.to_f }.inject(:/)
-    end
+    system([
+      "convert #{@angle > 0 ? "-rotate #{@angle * 90}" : ' '}",
+      "~/MobiMenu/public/images/#{@filename = URI.unescape(filename)}",
+      "-geometry x#{@@aspect_ratio.split('x')[1]}",
+      "-extent #{@aspect_ratio} -background black bgra:/dev/#{@path}"
+    ].join(' '))
+    @ratios = @aspect_ratio.reverse.split('x') unless @angle % 2 == 0
+    @ratios = @aspect_ratio.split('x') if @angle % 2 == 0
+    @ratio = @ratios.map { |ration| ration.to_f }.inject(:/)
     save
   end
   def width
