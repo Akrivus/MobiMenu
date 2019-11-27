@@ -5,14 +5,17 @@ require 'uri'
 
 Displays = []
 class Display
-  attr_reader :path, :aspect_ratio, :name, :filename, :pid
+  attr_reader :path, :aspect_ratio, :name, :angle, :filename, :pid
   def initialize(row)
-    @path, @aspect_ratio, @name = row[0..2]
+    @path, @aspect_ratio, @angle, @name = row[0..3]
+    x, y = @aspect_ratio.split('x')
+    system("fbset -g #{x} #{y} #{x} #{y} 32 -fb /dev/#{@path}")
     image(row[3])
   end
   def image(filename)
-    system("convert -geometry x#{@aspect_ratio.split('x')[1]} -background black -gravity center -extent #{@aspect_ratio} ~/MobiMenu/public/images/#{@filename = URI.unescape(filename)} bgra:/dev/#{@path}")
+    system("convert -rotate #{@angle} -geometry x#{@aspect_ratio.split('x')[1]} -background black -gravity center -extent #{@aspect_ratio} ~/MobiMenu/public/images/#{@filename = URI.unescape(filename)} bgra:/dev/#{@path}")
     @ratio = @aspect_ratio.split('x').map { |ration| ration.to_f }.inject(:/)
+    save
   end
   def width
     return height * @ratio
@@ -21,12 +24,11 @@ class Display
     return 384.0
   end
   def from_params(name, filename)
-    image(filename)
     @name = name
-    save
+    image(filename)
   end
   def to_a
-    [@path, @aspect_ratio, @name, @filename]
+    [@path, @aspect_ratio, @angle, @name, @filename]
   end
   def save
     CSV.open('display.csv', 'wb') do |csv|
