@@ -13,9 +13,11 @@ class Display
     image(row[3])
   end
   def image(filename)
+    @filename = URI.unescape(filename)
+    @angle = @angle.to_i
     system([
       "convert #{@angle > 0 ? "-rotate #{@angle * 90}" : ' '}",
-      "~/MobiMenu/public/images/#{@filename = URI.unescape(filename)}",
+      "~/MobiMenu/public/images/#{@filename}",
       "-geometry x#{@@aspect_ratio.split('x')[1]}",
       "-extent #{@aspect_ratio} -background black bgra:/dev/#{@path}"
     ].join(' '))
