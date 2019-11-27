@@ -9,7 +9,7 @@ class Display
   def initialize(row)
     @path, @aspect_ratio, @angle, @name = row[0..3]
     x, y = @aspect_ratio.split('x')
-    system("fbset -g #{x} #{y} #{x} #{y} 32 -fb /dev/#{@path}")
+    #system("fbset -g #{x} #{y} #{x} #{y} 32 -fb /dev/#{@path}")
     image(row[3])
   end
   def image(filename)
