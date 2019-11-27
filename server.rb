@@ -8,22 +8,22 @@ class Display
   attr_reader :path, :aspect_ratio, :name, :angle, :filename, :pid
   def initialize(row)
     @path, @aspect_ratio, @angle, @name = row[0..3]
-    x, y = @aspect_ratio.split('x')
-    system("fbset -g #{x} #{y} #{x} #{y} 32 -fb /dev/#{@path}")
     image(row[4])
   end
   def image(filename)
     @filename = URI.unescape(filename)
     @angle = @angle.to_i
+    @ratios = @aspect_ratio.split('x')
+    @ratios.reverse! if @angle.odd?
+    @ratio = @ratios.map { |r| r.to_f }.inject(:/)
+    system("fbset -g #{(@aspect_ratio.split('x') * 2).join(' ')} 32 -fb /dev/#{@path}")
     system([
-      "convert #{@angle > 0 ? "-rotate #{@angle * 90}" : ' '}",
-      "~/MobiMenu/public/images/#{@filename}",
+      "convert #{"-rotate #{@angle * 90}" if @angle > 0}",
       "-geometry x#{@aspect_ratio.split('x')[1]}",
-      "-extent #{@aspect_ratio} -background black bgra:/dev/#{@path}"
+      "-extent #{@aspect_ratio} -background black",
+      "~/MobiMenu/public/images/#{@filename}",
+      "bgra:/dev/#{@path}"
     ].join(' '))
-    @ratios = @aspect_ratio.reverse.split('x') unless @angle % 2 == 0
-    @ratios = @aspect_ratio.split('x') if @angle % 2 == 0
-    @ratio = @ratios.map { |ration| ration.to_f }.inject(:/)
     save
   end
   def width
