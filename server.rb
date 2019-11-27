@@ -18,7 +18,7 @@ class Display
     @ratio = @ratios.map { |r| r.to_f }.inject(:/)
     system("fbset -g #{(@aspect_ratio.split('x') * 2).join(' ')} 32 -fb /dev/#{@path}")
     system([
-      "convert #{"-rotate #{@angle * 90}" if @angle > 0}",
+      "convert#{" -rotate #{@angle * 90}" if @angle > 0}",
       "-geometry x#{@aspect_ratio.split('x')[1]}",
       "-extent #{@aspect_ratio} -background black",
       "~/MobiMenu/public/images/#{@filename}",
