@@ -9,12 +9,17 @@ class Display
   def initialize(row)
     @path, @aspect_ratio, @angle, @name = row[0..3]
     x, y = @aspect_ratio.split('x')
-    #system("fbset -g #{x} #{y} #{x} #{y} 32 -fb /dev/#{@path}")
+    system("fbset -g #{x} #{y} #{x} #{y} 32 -fb /dev/#{@path}")
     image(row[3])
   end
   def image(filename)
-    system("convert -rotate #{@angle} -geometry x#{@aspect_ratio.split('x')[1]} -background black -gravity center -extent #{@aspect_ratio} ~/MobiMenu/public/images/#{@filename = URI.unescape(filename)} bgra:/dev/#{@path}")
-    @ratio = @aspect_ratio.split('x').map { |ration| ration.to_f }.inject(:/)
+    system("convert -geometry x#{@aspect_ratio.split('x')[1]} -background black -rotate #{@angle * 90} -extent #{@aspect_ratio} ~/MobiMenu/public/images/#{@filename = URI.unescape(filename)} bgra:/dev/#{@path}")
+    case @angle
+    when 1, 3
+      @ratio = @aspect_ratio.reverse.split('x').map { |ration| ration.to_f }.inject(:/)
+    when 0, 2
+      @ratio = @aspect_ratio.split('x').map { |ration| ration.to_f }.inject(:/)
+    end
     save
   end
   def width
