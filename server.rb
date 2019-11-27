@@ -18,7 +18,7 @@ class Display
     system([
       "convert #{@angle > 0 ? "-rotate #{@angle * 90}" : ' '}",
       "~/MobiMenu/public/images/#{@filename}",
-      "-geometry x#{@@aspect_ratio.split('x')[1]}",
+      "-geometry x#{@aspect_ratio.split('x')[1]}",
       "-extent #{@aspect_ratio} -background black bgra:/dev/#{@path}"
     ].join(' '))
     @ratios = @aspect_ratio.reverse.split('x') unless @angle % 2 == 0
