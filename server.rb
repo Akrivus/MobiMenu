@@ -18,8 +18,8 @@ class Display
     @ratio = @ratios.map { |r| r.to_f }.inject(:/)
     system([
       "convert#{" -rotate #{@angle * 90}" if @angle > 0}",
-      "-geometry x#{@aspect_ratio.split('x')[1]}",
-      "-extent #{@aspect_ratio} -background black",
+      "-geometry #{@aspect_ratio.split('x')[0]}x",
+      "-extent #{@aspect_ratio} -background black -gravity center",
       "~/MobiMenu/public/images/#{@filename}",
       "bgra:/dev/#{@path}"
     ].join(' '))
