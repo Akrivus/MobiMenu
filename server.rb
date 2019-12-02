@@ -5,21 +5,21 @@ require 'uri'
 
 Displays = []
 class Display
-  attr_reader :path, :aspect_ratio, :name, :angle, :filename, :pid
+  attr_reader :path, :resolution, :name, :rotation, :filename, :pid
   def initialize(row)
-    @path, @aspect_ratio, @angle, @name = row[0..3]
+    @path, @resolution, @rotation, @name = row[0..3]
     image(row[4])
   end
   def image(filename)
     @filename = URI.unescape(filename) unless filename.nil?
-    @angle = @angle.to_i
-    @ratios = @aspect_ratio.split('x')
-    @ratios.reverse! if @angle.odd?
+    @rotation = @rotation.to_i
+    @ratios = @resolution.split('x')
+    @ratios.reverse! if @rotation.odd?
     @ratio = @ratios.map { |r| r.to_f }.inject(:/)
     system([
-      "convert#{" -rotate #{@angle * 90}" if @angle > 0}",
-      "-geometry #{@aspect_ratio.split('x')[0]}x",
-      "-extent #{@aspect_ratio} -background black -gravity center",
+      "convert#{" -rotate #{@rotation * 90}" if @rotation > 0}",
+      "-geometry #{@resolution.split('x')[0]}x",
+      "-extent #{@resolution} -background black -gravity center",
       "~/MobiMenu/public/images/#{@filename}",
       "bgra:/dev/#{@path}"
     ].join(' '))
@@ -31,14 +31,14 @@ class Display
   def height
     return 384.0
   end
-  def from_params(aspect_ratio, angle, name, filename)
-    @aspect_ratio = aspect_ratio
-    @angle = angle.to_i / 90
+  def from_params(resolution, rotation, name, filename)
+    @resolution = resolution
+    @rotation = rotation.to_i / 90
     @name = name
     image(filename)
   end
   def to_a
-    [@path, @aspect_ratio, @angle, @name, @filename]
+    [@path, @resolution, @rotation, @name, @filename]
   end
   def save
     CSV.open('display.csv', 'wb') do |csv|
@@ -106,9 +106,9 @@ post '/display/:path', signed_in: true do
         file.write(temp.read)
       end
     end
-    display.from_params(params[:aspect_ratio], params[:angle], params[:name], params[:image][:filename])
+    display.from_params(params[:resolution], params[:rotation], params[:name], params[:image][:filename])
   else
-    display.from_params(params[:aspect_ratio], params[:angle], params[:name], nil)
+    display.from_params(params[:resolution], params[:rotation], params[:name], nil)
   end
   redirect '/'
 end
