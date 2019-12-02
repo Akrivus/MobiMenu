@@ -42,6 +42,7 @@ class Display
   end
   def save
     CSV.open('display.csv', 'wb') do |csv|
+      csv << DisplaySheet[0]
       DisplaySheet[1..-1].each do |row|
         row = to_a if row[0].eql? @path
         csv << row
