@@ -17,7 +17,7 @@ class Display
     @ratios.reverse! if @rotation.odd?
     @ratio = @ratios.map { |r| r.to_f }.inject(:/)
     system([
-      "convert#{" -rotate #{@rotation * 90}" if @rotation > 0}",
+      "convert#{" -rotate #{@rotation}" if @rotation > 0}",
       "-geometry #{@resolution.split('x')[0]}x",
       "-extent #{@resolution} -background black -gravity center",
       "~/MobiMenu/public/images/#{@filename}",
@@ -33,7 +33,7 @@ class Display
   end
   def from_params(resolution, rotation, name, filename)
     @resolution = resolution
-    @rotation = rotation.to_i / 90
+    @rotation = rotation.to_i
     @name = name
     image(filename)
   end
@@ -42,7 +42,7 @@ class Display
   end
   def save
     CSV.open('display.csv', 'wb') do |csv|
-      DisplaySheet.each do |row|
+      DisplaySheet[1..-1].each do |row|
         row = to_a if row[0].eql? @path
         csv << row
       end
@@ -61,7 +61,7 @@ class Display
 end
 
 DisplaySheet = CSV.read('./display.csv')
-DisplaySheet.each do |row|
+DisplaySheet[1..-1].each do |row|
   Displays << Display.new(row)
 end
 

@@ -1,2 +1,3 @@
-fb0,9:16,Monitor L,default.jpg
-fb1,9:16,Monitor R,default.jpg
+Device Path,Resolution,Rotation,Name,File Path
+fb1,1824x1024,270,Left,NEW_MENU_FOOD_10-23.jpg
+fb0,1024x1920,0,Right,NEW_MENU_COFFEE_12-23.jpg
