@@ -26,18 +26,10 @@ class Display
     save
   end
   def width
-    unless [90, 270].include? @rotation
-      return height * @ratio
-    else
-      return 384.0
-    end
+    return height * @ratio
   end
   def height
-    if [90, 270].include? @rotation
-      return width * @ratio
-    else
-      return 384.0
-    end
+    return 384.0
   end
   def from_params(resolution, rotation, name, filename)
     @resolution = resolution
