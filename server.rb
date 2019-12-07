@@ -14,7 +14,7 @@ class Display
     @filename = URI.unescape(filename) unless filename.nil?
     @rotation = @rotation.to_i
     @ratios = @resolution.split('x')
-    @ratios.reverse! if @rotation.odd?
+    @ratios.reverse! if [90, 270].include? @rotation
     @ratio = @ratios.map { |r| r.to_f }.inject(:/)
     system([
       "convert#{" -rotate #{@rotation}" if @rotation > 0}",
@@ -26,10 +26,18 @@ class Display
     save
   end
   def width
-    return height * @ratio
+    unless [90, 270].include? @rotation
+      return height * @ratio
+    else
+      return 384.0
+    end
   end
   def height
-    return 384.0
+    if [90, 270].include? @rotation
+      return width * @ratio
+    else
+      return 384.0
+    end
   end
   def from_params(resolution, rotation, name, filename)
     @resolution = resolution
