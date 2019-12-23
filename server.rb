@@ -111,7 +111,7 @@ post '/display/:path', signed_in: true do
   else
     display.from_params(params[:resolution], params[:rotation], params[:name], nil)
   end
-  save
+  display.save
   redirect '/'
 end
 
