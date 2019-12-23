@@ -1,4 +1,5 @@
 require 'dotenv/load'
+require 'securerandom'
 require 'sinatra'
 require 'csv'
 require 'uri'
@@ -23,7 +24,6 @@ class Display
       "~/MobiMenu/public/images/#{@filename}",
       "bgra:/dev/#{@path}"
     ].join(' '))
-    save
   end
   def width
     return height * @ratio
@@ -102,15 +102,17 @@ end
 post '/display/:path', signed_in: true do
   display = Display.find(params[:path])
   unless params[:image].nil?
-    File.open("./public/images/#{params[:image][:filename]}", 'wb') do |file|
+    image = SecureRandom.hex
+    File.open("./public/images/#{image}", 'wb') do |file|
       File.open(params[:image][:tempfile].path, 'rb') do |temp|
         file.write(temp.read)
       end
     end
-    display.from_params(params[:resolution], params[:rotation], params[:name], params[:image][:filename])
+    display.from_params(params[:resolution], params[:rotation], params[:name], image)
   else
     display.from_params(params[:resolution], params[:rotation], params[:name], nil)
   end
+  save
   redirect '/'
 end
 
