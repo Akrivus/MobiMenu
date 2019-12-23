@@ -101,7 +101,7 @@ end
 post '/display/:path', signed_in: true do
   display = Display.find(params[:path])
   unless params[:image].nil?
-    image = SecureRandom.hex
+    image = "#{SecureRandom.hex(8)}.#{params[:image][:filename].split('.')[-1]}"
     File.open("./public/images/#{image}", 'wb') do |file|
       File.open(params[:image][:tempfile].path, 'rb') do |temp|
         file.write(temp.read)
